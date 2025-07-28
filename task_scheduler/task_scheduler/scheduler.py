@@ -9,6 +9,15 @@ class Task:
         self.duration = duration
         self.dependencies = dependencies if dependencies is not None else []
         self.function = function
+    
+    def __repr__(self):
+        return (f"Task(name={self.name!r}, duration={self.duration}, "
+                f"dependencies={self.dependencies}, "
+                f"function={self.function.__name__ if self.function else None})")
+
+    def __str__(self):
+        return (f"{self.name}: (duration: {self.duration}, "
+                f"dependencies: {self.dependencies})")
 
     def run(self):
         if self.function:
@@ -27,3 +36,7 @@ if __name__ == "__main__":
     print(f"Duration: {task.duration}")
     print(f"Dependencies: {task.dependencies}")
     task.run()
+
+    print(str(task))
+
+    print(repr(task))
