@@ -25,6 +25,21 @@ class Task:
         else:
             logging.warning(f"Task {self.name}: no function assigned.")
 
+class Scheduler:
+    def __init__(self, name: str, tasks_file: str):
+        self.name = name
+        self.tasks: dict[str, Task] = {}
+        self._load_tasks(tasks_file)
+
+    def _load_tasks(self, tasks_file: str):
+        pass
+
+    def validate_tasks(self):
+        pass
+
+    def run_tasks(self):
+        pass
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
 
