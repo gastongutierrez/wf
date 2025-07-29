@@ -1,5 +1,7 @@
+from asciinet import graph_to_ascii
 from ast import literal_eval
 import logging
+import networkx as nx
 from typing import Optional, Callable
 
 TASKS = {}
@@ -44,6 +46,8 @@ class Scheduler:
         self.name = name
         self.tasks: dict[str, Task] = {}
         self._load_tasks(tasks_file)
+        self._validated = False
+        self.expected_runtime: Optional[int] = None
 
     def _load_tasks(self, tasks_file: str):
         with open(tasks_file, 'r') as f:
@@ -75,7 +79,45 @@ class Scheduler:
                 raise ValueError("No tasks were loaded. Please review the tasks file.")
 
     def validate_tasks(self):
-        pass
+        logging.info("Validating task list...")
+
+        G = nx.DiGraph()
+        for name, task in self.tasks.items():
+            G.add_node(name, duration=task.duration)
+            for dependency in task.dependencies:
+                if dependency not in self.tasks:
+                    raise ValueError(f"Task '{name}' has a missing dependency '{dependency}'")
+                G.add_edge(dependency, name)
+
+        if not nx.is_directed_acyclic_graph(G):
+            cycles = list(nx.simple_cycles(G))
+            for i, cycle in enumerate(cycles, 1):
+                logging.error(f"Cycle {i}: {' -> '.join(cycle + [cycle[0]])}")
+            raise ValueError(f"Task graph contains {len(cycles)} cycle(s). Validation failed.")
+
+        ascii_graph = graph_to_ascii(G)
+        logging.info("\n" + ascii_graph)
+
+        topological_sort_list = list(nx.topological_sort(G))
+        tasks_finish_time = {}
+        for task in topological_sort_list:
+            predecessors_list = list(G.predecessors(task))
+            task_earliest_start = max(
+                (tasks_finish_time[predecessor] for predecessor in predecessors_list), 
+                default=0
+            )
+            tasks_finish_time[task] = task_earliest_start + self.tasks[task].duration
+
+        self.expected_runtime = max(tasks_finish_time.values(), default=0)
+        logging.info(f"Expected total runtime: {self.expected_runtime} seconds")
+
+        task_stages = {}
+        for task, finish_time in tasks_finish_time.items():
+            start = finish_time - self.tasks[task].duration
+            task_stages.setdefault(start, []).append(task)
+
+        self.execution_stages = [task_stages[start_time] for start_time in sorted(task_stages)]
+        self._validated = True
 
     def run_tasks(self):
         pass

@@ -8,6 +8,8 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+    "networkx (>=3.5,<4.0)",
+    "asciinet (>=0.3.1,<0.4.0)"
 ]
 
 [project.scripts]

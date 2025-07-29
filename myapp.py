@@ -12,6 +12,10 @@ def main():
     parser.add_argument("-r", "--run-tasks", action="store_true")
     args = parser.parse_args()
 
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+
     try:
         scheduler = Scheduler("MyAppScheduler", args.tasks_file)
         if args.validate_tasks:

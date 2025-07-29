@@ -12,6 +12,10 @@ def main():
     parser.add_argument("-v", "--validate-tasks", action="store_true")
     parser.add_argument("-r", "--run-tasks", action="store_true")
     args = parser.parse_args()
+    
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
 
     try:
         if not os.path.exists(args.tasks_module):
