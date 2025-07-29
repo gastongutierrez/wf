@@ -4,6 +4,17 @@ from typing import Optional, Callable
 
 TASKS = {}
 
+def task(func=None, *, name=None):
+    def wrapper(f):
+        task_name = name or f.__name__
+        TASKS[task_name] = f
+        return f
+
+    if func is None:
+        return wrapper
+    else:
+        return wrapper(func)
+
 class Task:
     def __init__(self, name: str, duration: int, 
                  dependencies: Optional[list[str]] = None, 
