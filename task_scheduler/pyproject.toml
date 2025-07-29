@@ -10,6 +10,11 @@ requires-python = ">=3.12"
 dependencies = [
 ]
 
+[project.scripts]
+wf-scheduler = "task_scheduler.__main__:main"
+
+[tool.poetry]
+packages = [{ include = "task_scheduler" }]
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
