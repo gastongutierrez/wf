@@ -6,6 +6,7 @@ import os
 import sys
 
 def main():
+    logging.basicConfig(level=logging.INFO, format='%(message)s')
     parser = ArgumentParser()
     parser.add_argument("-t", "--tasks-file", default="tasks.txt")
     parser.add_argument("-m", "--tasks-module", default="tasks.py")
@@ -35,7 +36,3 @@ def main():
     except Exception as e:
         logging.error(str(e))
         sys.exit(1)
-
-if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, format='%(message)s')
-    main()
