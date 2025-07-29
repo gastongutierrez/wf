@@ -2,6 +2,8 @@ from asciinet import graph_to_ascii
 from ast import literal_eval
 import logging
 import networkx as nx
+import threading
+import time
 from typing import Optional, Callable
 
 TASKS = {}
@@ -48,6 +50,7 @@ class Scheduler:
         self._load_tasks(tasks_file)
         self._validated = False
         self.expected_runtime: Optional[int] = None
+        self.actual_runtime: Optional[float] = None
 
     def _load_tasks(self, tasks_file: str):
         with open(tasks_file, 'r') as f:
@@ -120,4 +123,28 @@ class Scheduler:
         self._validated = True
 
     def run_tasks(self):
-        pass
+        if not self._validated:
+            self.validate_tasks()
+
+        logging.info("Running task list...")
+        start_time = time.perf_counter()
+
+        for i, stage in enumerate(self.execution_stages, 1):
+            logging.info(f"Executing stage {i} - Tasks: {stage}")
+            threads = []
+
+            for task_name in stage:
+                task = self.tasks[task_name]
+                thread = threading.Thread(target=task.run)
+                thread.start()
+                threads.append(thread)
+
+            for thread in threads:
+                thread.join()
+
+        end_time = time.perf_counter()
+        self.actual_runtime = round(end_time - start_time, 2)
+
+        logging.info(f"Actual total runtime: {self.actual_runtime} seconds")
+        delta_runtime = round(self.actual_runtime - self.expected_runtime, 2)
+        logging.info(f"Difference from expected: {delta_runtime:+.2f} seconds") 
