@@ -22,14 +22,13 @@ pip install ./task_scheduler
 You can run the CLI directly:
 
 ```bash
-wf-scheduler --validate-tasks
-wf-scheduler --run-tasks
+wf-scheduler --validate-tasks --run-tasks
 ```
 
 Or, you can run the example provided:
 
 ```bash
-python myapp.py
+python myapp.py --validate-tasks --run-tasks
 ```
 
 This example imports and runs the Scheduler instance:
@@ -42,7 +41,7 @@ scheduler.validate_tasks()
 scheduler.run_tasks()
 ```
 
-Tasks should be defined in a text file with the following format:
+Tasks must be defined in a text file with the following format:
 
 ```
 # name, duration, [dependencies]
@@ -55,7 +54,7 @@ F, 7, ['D', 'E']
 G, 1, []
 ```
 
-Task functions must be defined using the `@task` decorator. The name should match the task name in the file:
+Task functions should be defined using the `@task` decorator. The name must match the task name in the tasks file:
 
 ```python
 @task(name="A")
