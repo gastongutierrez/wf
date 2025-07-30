@@ -32,21 +32,17 @@ Or, you can run the example provided:
 python myapp.py
 ```
 
-This example imports the Scheduler class:
+This example imports and runs the Scheduler instance:
 
 ```python
 from task_scheduler.scheduler import Scheduler
-```
 
-Creates the Scheduler instance and runs its methods:
-
-```python
 scheduler = Scheduler("MyAppScheduler", args.tasks_file)
 scheduler.validate_tasks()
 scheduler.run_tasks()
 ```
 
-The tasks should be defined in a tasks file with the following format:
+Tasks should be defined in a text file with the following format:
 
 ```
 # name, duration, [dependencies]
@@ -59,7 +55,7 @@ F, 7, ['D', 'E']
 G, 1, []
 ```
 
-You can define tasks functions using the `@task` decorator:
+Task functions must be defined using the `@task` decorator. The name should match the task name in the file:
 
 ```python
 @task(name="A")
