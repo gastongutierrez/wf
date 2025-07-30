@@ -1,3 +1,4 @@
+# This module implements Task and Scheduler classes
 from asciinet import graph_to_ascii
 from ast import literal_eval
 import logging
@@ -6,6 +7,7 @@ import threading
 import time
 from typing import Optional, Callable
 
+# Stores function names to be assigned to tasks
 TASKS = {}
 
 def task(func=None, *, name=None):
@@ -23,6 +25,9 @@ class Task:
     def __init__(self, name: str, duration: int, 
                  dependencies: Optional[list[str]] = None, 
                  function: Optional[Callable] = None):
+        """
+        Iniitializes a single Task with name, duration, dependencies and optional function.
+        """
         self.name = name
         self.duration = duration
         self.dependencies = dependencies if dependencies is not None else []
@@ -38,6 +43,9 @@ class Task:
                 f"dependencies: {self.dependencies})")
 
     def run(self):
+        """
+        Runs the assigned function.
+        """
         if self.function:
             return self.function()
         else:
@@ -45,6 +53,11 @@ class Task:
 
 class Scheduler:
     def __init__(self, name: str, tasks_file: str):
+        """
+        Initialiazes the Scheduler. Requires a name and the path to the tasks file.
+        Tasks can only be loaded at creation time. If the tasks need to be changed, 
+        a new Scheduler instance must be created.
+        """
         self.name = name
         self.tasks: dict[str, Task] = {}
         self._load_tasks(tasks_file)
@@ -53,6 +66,11 @@ class Scheduler:
         self.actual_runtime: Optional[float] = None
 
     def _load_tasks(self, tasks_file: str):
+        """
+        Loads and parses tasks from the tasks file.
+        The format of each line should be: name, duration, [dependencies].
+        This method gets called during initialization only.
+        """
         with open(tasks_file, 'r') as f:
             for line_number, line in enumerate(f, 1):
                 line = line.strip()
@@ -82,6 +100,10 @@ class Scheduler:
                 raise ValueError("No tasks were loaded. Please review the tasks file.")
 
     def validate_tasks(self):
+        """
+        Validates the task list, builds a graph, checks for cycles, obtains the 
+        critical path, and calculates the expected runtime.
+        """
         logging.info("Validating task list...")
 
         G = nx.DiGraph()
@@ -123,6 +145,10 @@ class Scheduler:
         self._validated = True
 
     def run_tasks(self):
+        """
+        Runs the tasks in the order defined by the execution stages 
+        obtained from the validation step.
+        """
         if not self._validated:
             self.validate_tasks()
 

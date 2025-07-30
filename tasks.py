@@ -1,3 +1,4 @@
+# This file defines the functions to be assigned to tasks.
 from task_scheduler.scheduler import task
 import time
 

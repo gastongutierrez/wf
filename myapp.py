@@ -1,3 +1,4 @@
+# This file is an example of a task scheduler application.
 import logging
 from argparse import ArgumentParser
 from task_scheduler.scheduler import Scheduler
@@ -12,6 +13,7 @@ def main():
     parser.add_argument("-r", "--run-tasks", action="store_true")
     args = parser.parse_args()
 
+    # If no arguments were provided, shows help and exit
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(0)

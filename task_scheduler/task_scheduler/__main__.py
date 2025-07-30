@@ -13,12 +13,14 @@ def main():
     parser.add_argument("-v", "--validate-tasks", action="store_true")
     parser.add_argument("-r", "--run-tasks", action="store_true")
     args = parser.parse_args()
-    
+
+    # If no arguments were provided, shows help and exit
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(0)
 
     try:
+        # Loads the tasks module dynamically
         if not os.path.exists(args.tasks_module):
             raise FileNotFoundError(f"Tasks module file '{args.tasks_module}' not found.")
         spec = importlib.util.spec_from_file_location("tasks", args.tasks_module)
